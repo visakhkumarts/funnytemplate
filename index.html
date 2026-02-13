@@ -28,19 +28,16 @@ body {
 
 h1 {
     font-size: 3rem;
-    animation: fadeIn 2s ease-in-out;
 }
 
 p {
     font-size: 1.2rem;
     margin-bottom: 20px;
-    animation: fadeIn 3s ease-in-out;
 }
 
 .buttons {
     display: flex;
     gap: 20px;
-    position: relative;
 }
 
 button {
@@ -57,20 +54,12 @@ button {
     color: white;
 }
 
-.yes:hover {
-    transform: scale(1.1);
-}
-
 .no {
     background: white;
     color: #ff4b5c;
 }
 
-@keyframes fadeIn {
-    from {opacity: 0; transform: translateY(20px);}
-    to {opacity: 1; transform: translateY(0);}
-}
-
+/* Floating hearts */
 .heart {
     position: fixed;
     color: white;
@@ -83,11 +72,44 @@ button {
     100% { transform: translateY(-10vh); opacity: 0; }
 }
 
+/* Confetti */
+.confetti {
+    position: fixed;
+    width: 10px;
+    height: 10px;
+    opacity: 0.8;
+    animation: fall linear forwards;
+}
+
+@keyframes fall {
+    to {
+        transform: translateY(100vh) rotate(720deg);
+        opacity: 1;
+    }
+}
+
+/* Celebration screen */
+.celebration {
+    position: fixed;
+    inset: 0;
+    background: linear-gradient(135deg,#ff4b5c,#ff758c);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    animation: fadeIn 0.6s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
 </style>
 </head>
 <body>
 
-<div class="container">
+<div class="container" id="mainContent">
     <h1>Dear Anjali ❤️</h1>
     <p>You make my world brighter every single day ✨</p>
     <p>I can't imagine my life without your smile 💕</p>
@@ -101,7 +123,7 @@ button {
 
 <script>
 
-// Floating hearts animation
+// Floating hearts
 function createHeart() {
     const heart = document.createElement("div");
     heart.classList.add("heart");
@@ -110,41 +132,66 @@ function createHeart() {
     heart.style.fontSize = (Math.random() * 20 + 20) + "px";
     document.body.appendChild(heart);
 
-    setTimeout(() => {
-        heart.remove();
-    }, 6000);
+    setTimeout(() => heart.remove(), 6000);
 }
-
 setInterval(createHeart, 500);
 
-// NO button funny effect
+// Funny NO button
 const noBtn = document.getElementById("noBtn");
 
-noBtn.addEventListener("mouseover", function() {
+const messages = [
+    "No 😅",
+    "Are you sure? 😢",
+    "Think again 😏",
+    "Don't break my heart 💔",
+    "Wrong answer 😤",
+    "Click Yes 😌"
+];
 
-    // Make it float only when hovered
+let moveCount = 0;
+
+noBtn.addEventListener("mouseenter", function() {
     noBtn.style.position = "fixed";
-
     const x = Math.random() * (window.innerWidth - noBtn.offsetWidth);
     const y = Math.random() * (window.innerHeight - noBtn.offsetHeight);
-
     noBtn.style.left = x + "px";
     noBtn.style.top = y + "px";
+    noBtn.innerText = messages[moveCount % messages.length];
+    moveCount++;
 });
 
-// YES click celebration
+// 🎉 YES Celebration with Confetti
 function sayYes() {
-    document.body.innerHTML = `
-        <div style="height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;background:linear-gradient(135deg,#ff4b5c,#ff758c);color:white;text-align:center;">
-            <h1 style="font-size:3rem;">YAYYY ANJALI!!! 🎉💖</h1>
-            <p style="font-size:1.5rem;">You just made me the happiest person alive 😍</p>
-            <p style="font-size:1.2rem;">Happy Valentine’s Day ❤️</p>
-            <p style="font-size:1rem;margin-top:20px;">Forever yours 💕</p>
-        </div>
+
+    // Create celebration screen
+    const celebration = document.createElement("div");
+    celebration.className = "celebration";
+    celebration.innerHTML = `
+        <h1>YAYYY ANJALI!!! 🎉💖</h1>
+        <p>You just made me the happiest person alive 😍</p>
+        <p>Happy Valentine’s Day ❤️</p>
     `;
+    document.body.appendChild(celebration);
+
+    // Create confetti burst
+    for (let i = 0; i < 150; i++) {
+        const confetti = document.createElement("div");
+        confetti.classList.add("confetti");
+
+        const colors = ["#ff4b5c", "#ffffff", "#ffd700", "#00ffff", "#ff69b4"];
+        confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+
+        confetti.style.left = Math.random() * 100 + "vw";
+        confetti.style.top = "-10px";
+        confetti.style.animationDuration = (Math.random() * 3 + 2) + "s";
+
+        document.body.appendChild(confetti);
+
+        setTimeout(() => confetti.remove(), 5000);
+    }
 }
 
 </script>
 
 </body>
-</html>  
+</html>
